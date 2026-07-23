@@ -2,127 +2,201 @@
 📡 K-POP Comeback Radar
 Apple Music Catalog · YouTube · Global News · Naver News · Solar AI
 <br>
-K-POP 아티스트의 컴백 신호를 한 화면에서 탐색하는  
-Streamlit 기반 데이터·AI 대시보드
+<img src="https://img.shields.io/badge/Apple-iTunes_Search_API-111111?style=for-the-badge&logo=apple&logoColor=white" alt="Apple">
+<img src="https://img.shields.io/badge/YouTube-Data_API_v3-FF0033?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube">
+<img src="https://img.shields.io/badge/Streamlit-Web_App-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit">
+<br><br>
+<img src="https://img.shields.io/badge/Mediastack-Global_News-7456D8?style=flat-square" alt="Mediastack">
+<img src="https://img.shields.io/badge/Naver-Korean_News-03C75A?style=flat-square&logo=naver&logoColor=white" alt="Naver">
+<img src="https://img.shields.io/badge/Upstage-Solar_AI-E36AA5?style=flat-square" alt="Solar">
+<br><br>
+K-POP 아티스트의 최신 발매, YouTube 반응, 국내외 뉴스와 AI 분석을  
+Apple Music 스타일의 밝은 대시보드에서 확인하는 Streamlit 웹앱
 <br>
-![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Streamlit](https://img.shields.io/badge/Streamlit-Web_App-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
-![Apple](https://img.shields.io/badge/Apple-iTunes_Search-000000?style=for-the-badge&logo=apple&logoColor=white)
-![YouTube](https://img.shields.io/badge/YouTube-Data_API-FF0000?style=for-the-badge&logo=youtube&logoColor=white)
-![Solar](https://img.shields.io/badge/Upstage-Solar_AI-6C5CE7?style=for-the-badge)
-<br>
-> 음악 발매 정보, 영상 반응, 국내외 뉴스 화제성을 모아  
-> **Comeback Score**와 **AI 분석 인사이트**를 제공하는 학습용 프로젝트입니다.
+🌐 Live App
 </div>
 ---
-✨ Project Overview
-K-POP Comeback Radar는 여러 공개 API를 결합해  
-K-POP 아티스트의 최근 활동과 컴백 신호를 시각적으로 보여주는 웹앱입니다.
-사용자는 사이드바에서 아티스트를 선택한 뒤 다음 정보를 확인할 수 있습니다.
+✨ What This App Does
+K-POP Comeback Radar는 여러 공개 API의 데이터를 하나의 화면에 모아 아티스트의 컴백 신호를 탐색합니다.
 영역	제공 정보
-🍎 Apple Music Catalog	최신 앨범, 발매일, 트랙 수, 앨범 이미지, Apple Music 링크
-🎧 Apple Search Tracks	검색 관련도 기준 트랙, 앨범명, 발매일, 미리듣기
+🍎 Apple Catalog	최신 앨범, 발매일, 커버 이미지, 트랙, Apple Music 링크
 🎬 YouTube Signal	최근 영상, 조회수, 좋아요, 댓글
 🌎 Global News	Mediastack 기반 영문권 기사
 🇰🇷 Korean News	네이버 검색 API 기반 국내 기사
 📈 Comeback Score	발매·영상·뉴스 신호를 조합한 자체 지표
-🤖 Solar AI Analyst	수집된 데이터를 바탕으로 한 질의응답
+🤖 Solar Analyst	현재 수집된 데이터를 기반으로 한 AI 질의응답
+> 음악 데이터는 Apple iTunes Search API를 사용합니다.  
+> 이 버전에는 Spotify API, Spotify Secret, Spotify 화면 문구가 포함되지 않습니다.
 ---
 🎨 UI Concept
-이번 버전은 Apple Music 스타일의 화이트·라벤더 디자인을 중심으로 구성했습니다.
-Design Direction
-밝은 화이트·라벤더·핑크 그라데이션
+이번 버전의 핵심은 Apple Music 스타일의 화이트·라벤더 인터페이스입니다.
+Design Highlights
+밝은 화이트·라벤더·핑크 그라데이션 배경
 Apple 계열 시스템 폰트 우선 적용
 반투명 Glassmorphism 카드
 KPI 카드 순차 등장 애니메이션
-앨범 카드 Hover 인터랙션
+앨범 카드 Hover 상승·확대 효과
 모바일 화면 최적화
-사이드바와 콘텐츠 영역의 명확한 대비
-아티스트 선택창 텍스트는 검정색으로 고정
-Color System
-용도	컬러
-Primary Purple	`#6957D9`
-Secondary Pink	`#D94F9A`
-Main Text	`#25233A`
-Muted Text	`#66647B`
-Lavender Background	`#F0EDFF`
-Card Background	`rgba(255,255,255,.70)`
----
-🧭 Main Experience
-```text
-┌──────────────────────────────────────────────────────┐
-│                K-POP Comeback Radar                  │
-│ Apple · YouTube · Global News · Naver · Solar AI    │
-└──────────────────────────────────────────────────────┘
-
-┌──────────────┬──────────────┬──────────────┐
-│ Apple Albums │ YouTube View │ Global News  │
-│      12      │    48.5M     │      10      │
-└──────────────┴──────────────┴──────────────┘
-
-┌─────────────────┬──────────────────┬───────────────┐
-│ Latest Release  │ YouTube Signal   │ Comeback Score│
-│ Album Artwork   │ Recent Videos    │      82       │
-└─────────────────┴──────────────────┴───────────────┘
-
-┌──────────────────────────────────────────────────────┐
-│ Global News / Korean News                           │
-├──────────────────────────────────────────────────────┤
-│ Solar AI Analyst Chat                               │
-└──────────────────────────────────────────────────────┘
+사이드바 일반 텍스트는 흰색
+아티스트 선택창 내부 글씨는 검정색
+차트·카드·본문의 컬러 체계 통일
+Color Palette
+Role	Color
+Primary Purple	`#6F5BD6`
+Deep Purple	`#4F3DB1`
+Accent Pink	`#DD6AA7`
+Main Text	`#242238`
+Muted Text	`#6D6980`
+Lavender	`#EEE7FF`
+Light Background	`#FFF9FC`
+Glass Card	`rgba(255,255,255,.72)`
+Typography
+```css
+-apple-system,
+BlinkMacSystemFont,
+"SF Pro Display",
+"SF Pro Text",
+"Pretendard",
+"Noto Sans KR",
+"Segoe UI",
+sans-serif
 ```
+---
+🖥 Screen Structure
+```text
+┌──────────────────────────────────────────────────────────────────────┐
+│ K-POP DATA & AI INTELLIGENCE                                        │
+│ K-POP Comeback Radar                                                │
+│ Apple · YouTube · Global News · Korean News · Solar AI             │
+└──────────────────────────────────────────────────────────────────────┘
+
+┌──────────────┬──────────────┬──────────────┬────────────┬────────────┐
+│ Apple Albums │ Apple Tracks │ YouTube View │ Global News│ Korean News│
+└──────────────┴──────────────┴──────────────┴────────────┴────────────┘
+
+┌─────────────────────┬─────────────────────┬──────────────────────────┐
+│ Latest Apple Release│ YouTube Signal      │ Comeback Score           │
+│ Album Artwork       │ Recent Videos       │ Radar Chart              │
+│ Release Information │ Views / Likes       │ Signal Interpretation    │
+└─────────────────────┴─────────────────────┴──────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ Global News / Korean News                                           │
+├──────────────────────────────────────────────────────────────────────┤
+│ Radar Interpretation                                                │
+├──────────────────────────────────────────────────────────────────────┤
+│ Solar AI Analyst Chat                                               │
+└──────────────────────────────────────────────────────────────────────┘
+```
+---
+🖼 Add a Real Screenshot
+앱 화면을 캡처한 뒤 저장소에 다음 경로로 업로드하세요.
+```text
+assets/kpop-radar-preview.png
+```
+README에 아래 코드를 추가하면 실제 앱 화면이 표시됩니다.
+```html
+<p align="center">
+  <img
+    src="assets/kpop-radar-preview.png"
+    width="100%"
+    alt="K-POP Comeback Radar Preview"
+  >
+</p>
+```
+권장 캡처:
+데스크톱 브라우저 폭 1440px 이상
+Hero 영역부터 Comeback Score까지 포함
+사이드바를 펼친 상태
+실제 Apple 앨범 이미지가 표시된 상태
+---
+🍎 Apple-Only Music Data
+음악 카탈로그는 다음 엔드포인트를 사용합니다.
+```text
+https://itunes.apple.com/search
+```
+Data Fields
+아티스트명
+앨범명
+발매일
+앨범 커버
+트랙 수
+Apple Music 링크
+트랙 미리듣기
+장르
+검색된 앨범·트랙 수
+Apple 검색 결과는 공식 인기 순위가 아니라 검색 관련도 순서입니다.
+정상 배포된 최종 버전은 앱 하단에 다음 문구가 표시됩니다.
+```text
+APPLE-ONLY BUILD 2026-07-23
+```
+---
+📊 Comeback Score
+Comeback Score는 공식 차트가 아니라 프로젝트에서 정의한 학습용 지표입니다.
+Signal	Weight
+발매 최신성	30%
+YouTube 반응	35%
+글로벌 뉴스	15%
+국내 뉴스	15%
+Apple 카탈로그	5%
+Total	100%
+Score Guide
+Score	Meaning
+85–100	🔥 초강력 컴백 신호
+70–84	🚀 높은 관심도
+55–69	✨ 상승 신호 감지
+40–54	🌙 관심도 관찰 중
+0–39	📡 레이더 탐색 중
 ---
 🛠 Tech Stack
 Category	Technology
-Frontend / Web App	Streamlit
+Web App	Streamlit
 Language	Python
 Data Processing	Pandas
 Visualization	Plotly
-HTTP Client	Requests
-Music Catalog	Apple iTunes Search API
-Video Analytics	YouTube Data API v3
-Global News	Mediastack API
+HTTP	Requests
+Music	Apple iTunes Search API
+Video	YouTube Data API v3
+Global News	Mediastack
 Korean News	Naver Search API
-AI Chat	Upstage Solar API
+AI	Upstage Solar
 Deployment	Streamlit Community Cloud
 Version Control	GitHub
 ---
-📂 Project Structure
+📁 Project Structure
 ```text
 my-kpop-app/
 ├── main.py
 ├── requirements.txt
-└── README.md
+├── README.md
+└── assets/
+    └── kpop-radar-preview.png
 ```
 ---
-🚀 Getting Started
-1. Repository Clone
+🚀 Local Setup
+1. Clone
 ```bash
 git clone https://github.com/YOUR_GITHUB_ID/YOUR_REPOSITORY.git
 cd YOUR_REPOSITORY
 ```
-2. Virtual Environment
-macOS / Linux
-```bash
-python -m venv .venv
-source .venv/bin/activate
-```
+2. Create Virtual Environment
 Windows
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
 ```
-3. Install Dependencies
+macOS / Linux
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+3. Install
 ```bash
 pip install -r requirements.txt
 ```
-4. Run Streamlit
+4. Run
 ```bash
 streamlit run main.py
-```
-브라우저에서 다음 주소로 실행됩니다.
-```text
-http://localhost:8501
 ```
 ---
 📦 requirements.txt
@@ -133,10 +207,8 @@ pandas>=2.2.0
 plotly>=5.24.0
 ```
 ---
-🔑 API Configuration
+🔑 Streamlit Secrets
 Apple iTunes Search API는 별도 키가 필요하지 않습니다.
-나머지 API 키는 Streamlit Secrets 또는 로컬 `.streamlit/secrets.toml`에 저장합니다.
-`.streamlit/secrets.toml`
 ```toml
 YOUTUBE_API_KEY = "YOUR_YOUTUBE_API_KEY"
 
@@ -148,100 +220,20 @@ NAVER_CLIENT_SECRET = "YOUR_NAVER_CLIENT_SECRET"
 SOLAR_API_KEY = "YOUR_SOLAR_API_KEY"
 SOLAR_MODEL = "solar-pro3"
 ```
-> API Key는 절대로 `main.py` 또는 공개 GitHub 저장소에 직접 입력하지 마세요.
----
-🔌 API Roles
-🍎 Apple iTunes Search API
-별도 인증키 없이 사용합니다.
+로컬에서는 다음 파일에 저장합니다.
 ```text
-https://itunes.apple.com/search
+.streamlit/secrets.toml
 ```
-활용 데이터:
-아티스트명
-앨범명
-발매일
-앨범 이미지
-트랙 수
-Apple Music 링크
-일부 트랙 미리듣기
-Apple 검색 결과는 공식 인기 순위가 아니라 검색 관련도 순서입니다.
----
-🎬 YouTube Data API
-활용 데이터:
-최근 업로드 영상
-영상 조회수
-좋아요 수
-댓글 수
-채널명
-업로드 날짜
-YouTube 검색 API는 할당량을 사용하므로  
-앱에서는 `st.cache_data`를 적용해 불필요한 반복 호출을 줄였습니다.
----
-🌎 Mediastack
-활용 데이터:
-글로벌 영문 뉴스
-기사 제목
-출처
-발행일
-기사 링크
-무료 플랜에서는 HTTP 엔드포인트 또는 호출량 제한이 있을 수 있습니다.
----
-🇰🇷 Naver Search API
-활용 데이터:
-국내 최신 뉴스
-기사 제목
-발행일
-원문 링크
-요청 헤더:
-```text
-X-Naver-Client-Id
-X-Naver-Client-Secret
-```
----
-🤖 Upstage Solar
-수집된 음악·영상·뉴스 데이터를 기반으로 질문에 답합니다.
-예시 질문:
-```text
-이번 컴백에서 가장 강한 신호는 무엇이야?
-국내와 해외 반응의 차이를 분석해줘.
-마케팅 관점에서 핵심 시사점을 정리해줘.
-YouTube 반응과 뉴스 화제성을 비교해줘.
-```
-Solar API가 연결되지 않은 경우에는  
-앱 내부의 규칙 기반 분석으로 대체됩니다.
----
-📈 Comeback Score
-Comeback Score는 공식 차트나 매출 지표가 아니라  
-본 프로젝트에서 정의한 학습용 자체 지표입니다.
-지표	가중치
-최신 발매 시점	30%
-YouTube 반응	35%
-글로벌 뉴스	15%
-국내 뉴스	15%
-Apple 카탈로그 규모	5%
-합계	100%
-Score Interpretation
-점수	해석
-85–100	🔥 초강력 컴백 신호
-70–84	🚀 높은 관심도
-55–69	✨ 상승 신호 감지
-40–54	🌙 관심도 관찰 중
-0–39	📡 레이더 탐색 중
-Important Note
-Apple 카탈로그 검색량은 실제 판매량이나 스트리밍 수가 아닙니다.
-YouTube 조회수는 수집 시점의 누적 값입니다.
-뉴스 기사량은 API 검색 결과와 무료 플랜 한도에 영향을 받습니다.
-Comeback Score는 아티스트 간 공식 비교 지표로 사용하면 안 됩니다.
+> API 키는 `main.py`, `README.md`, 공개 GitHub 저장소에 직접 입력하지 마세요.
 ---
 🧪 Demo Mode
-API 키가 없거나 호출에 실패해도 앱 전체가 중단되지 않도록  
-데모 데이터와 예외 처리 기능을 포함했습니다.
+일부 API 키가 없거나 호출이 실패해도 앱 전체가 중단되지 않도록 데모 데이터가 제공됩니다.
 사이드바에서:
 ```text
 데모 모드 강제 사용
 ```
-을 활성화하면 모든 화면을 샘플 데이터로 확인할 수 있습니다.
-실데이터 연결 상태는 사이드바에 다음과 같이 표시됩니다.
+을 활성화하면 샘플 데이터로 전체 UI를 확인할 수 있습니다.
+연결 상태 예시:
 ```text
 🟢 Apple Music Catalog
 🟢 YouTube
@@ -251,85 +243,89 @@ API 키가 없거나 호출에 실패해도 앱 전체가 중단되지 않도록
 ```
 ---
 ☁️ Streamlit Cloud Deployment
-1. GitHub에 파일 업로드
+Deploy Settings
 ```text
-main.py
-requirements.txt
-README.md
+Repository: GitHub 저장소
+Branch: main
+Main file path: main.py
 ```
-2. Streamlit Community Cloud에서 앱 생성
-Repository: 프로젝트 저장소
-Branch: `main`
-Main file path: `main.py`
-3. Secrets 등록
+Secrets
 ```text
 Manage app
 → Settings
 → Secrets
 ```
-Secrets를 저장한 뒤 앱을 재부팅합니다.
+Reboot
 ```text
 Manage app
 → Reboot app
 ```
+Confirm the Correct Build
+화면 하단에 다음 문구가 보여야 합니다.
+```text
+APPLE-ONLY BUILD 2026-07-23
+```
+보이지 않는다면 다음 항목을 확인하세요.
+GitHub에 Apple 최종 파일이 실제로 커밋됐는지
+배포 Branch가 올바른지
+Main file path가 `main.py`인지
+다른 폴더의 오래된 파일을 실행 중이지 않은지
 ---
 📱 Responsive Design
-모바일 화면에서는 다음 요소가 자동 조정됩니다.
-Hero 타이틀 크기 축소
-카드 패딩 및 간격 조정
-앨범 이미지 축소
-KPI 숫자 크기 조정
-Hover 효과 비활성화
-탭 및 채팅 UI 크기 최적화
+모바일에서는 다음 UI가 자동 조정됩니다.
+Hero 타이틀 크기
+본문 줄 간격
+앨범 커버 크기
+카드 패딩과 간격
+KPI 숫자 크기
+뉴스 탭 크기
+채팅 카드 크기
+Hover 이동 효과 비활성화
 ---
-⚠️ Troubleshooting
-Apple 데이터가 검색되지 않을 때
-아티스트 영문명이 Apple 카탈로그에 등록된 이름과 다른지 확인
-검색 결과가 다른 동명의 아티스트와 섞이는지 확인
-`ARTISTS` 딕셔너리의 `apple_query` 값을 수정
-YouTube 오류
+🧯 Troubleshooting
+이전 Spotify 화면이 표시될 때
+GitHub의 `main.py`에서 아래 문자열을 검색합니다.
 ```text
-HTTP 403
-quotaExceeded
+Spotify
+SPOTIFY_API_URL
+SPOTIFY_CLIENT_ID
+SPOTIFY_CLIENT_SECRET
+get_spotify_data
 ```
-일일 API 할당량 확인
-Google Cloud에서 YouTube Data API v3 활성화 여부 확인
-API Key 제한 설정 확인
-Mediastack 오류
+최종 Apple 전용 파일에서는 모두 0건이어야 합니다.
+반드시 존재해야 하는 문자열:
 ```text
-invalid_access_key
-usage_limit_reached
-https_access_restricted
+ITUNES_SEARCH_URL
+get_apple_music_data
+MEDIASTACK_API_URL
+APPLE-ONLY BUILD 2026-07-23
 ```
-API Key 확인
-무료 플랜 호출량 확인
-무료 플랜의 HTTP/HTTPS 정책 확인
-Naver API 오류
-```text
-HTTP 401
-HTTP 403
+Apple Image Quality
+고해상도 앨범 이미지는 다음 방식으로 변환합니다.
+```python
+artwork_high_res = artwork.replace(
+    "100x100bb",
+    "600x600bb",
+)
 ```
-Client ID와 Client Secret 확인
-네이버 개발자센터에서 검색 API가 선택됐는지 확인
-애플리케이션 환경 등록 확인
-Solar 오류
-```text
-model_not_found
-unauthorized
-```
-Solar API Key 확인
-현재 사용 가능한 모델명 확인
-`SOLAR_MODEL` 값을 계정에서 제공되는 모델명으로 변경
+YouTube 403
+YouTube Data API v3 활성화 여부
+API Key 제한
+일일 할당량
+Mediastack Error
+API Key
+무료 플랜 호출량
+HTTP/HTTPS 플랜 제한
+Naver 401 / 403
+Client ID와 Client Secret
+검색 API 선택 여부
+애플리케이션 환경 등록
+Solar Error
+API Key
+사용 가능한 모델명
+`SOLAR_MODEL` 값
 ---
 🔒 Security
-다음 파일은 GitHub에 업로드하지 않는 것을 권장합니다.
-```gitignore
-.streamlit/secrets.toml
-.env
-.venv/
-__pycache__/
-*.pyc
-```
 추천 `.gitignore`:
 ```gitignore
 .streamlit/secrets.toml
@@ -341,25 +337,23 @@ __pycache__/
 ```
 ---
 🗺 Roadmap
-현재 버전 이후 확장 가능한 기능:
-아티스트 직접 검색
-국가별 YouTube 반응 비교
-컴백 전후 조회수 추이 저장
+자유 아티스트 검색
+아티스트 비교
 발매 일정 캘린더
+컴백 전후 YouTube 추이
+국가별 뉴스 비교
 뉴스 키워드 분석
-멀티 아티스트 비교
 AI 자동 요약 카드
-컴백 알림 기능
+컴백 알림
 ---
-📌 Disclaimer
-이 프로젝트는 API 활용, 데이터 시각화, Streamlit 배포 및  
-생성형 AI 연동을 학습하기 위한 개인 프로젝트입니다.
-Apple, YouTube, Naver, Mediastack, Upstage 및 각 아티스트·기획사와  
-공식적인 제휴 관계가 없습니다.
+⚠️ Disclaimer
+이 프로젝트는 API 활용, 데이터 시각화, Streamlit 배포와 생성형 AI 연동을 연습하기 위한 개인 프로젝트입니다.
+Apple, YouTube, Naver, Mediastack, Upstage, 아티스트 및 기획사와 공식적인 제휴 관계가 없습니다.
 모든 상표와 콘텐츠의 권리는 각 소유자에게 있습니다.
 ---
 <div align="center">
-Built with Python, Streamlit and K-POP Data
-K-POP Comeback Radar
-🍎 Apple Music Catalog · 🎬 YouTube · 📰 News · 🤖 Solar AI
+📡 K-POP Comeback Radar
+🍎 Apple Catalog · 🎬 YouTube · 📰 Global & Korean News · 🤖 Solar AI
+<br>
+`APPLE-ONLY BUILD`
 </div>
