@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import base64
 import html
 import math
 import re
@@ -29,81 +28,80 @@ st.set_page_config(
 # 2. API ENDPOINTS / ARTISTS
 # =========================================================
 
-SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
-SPOTIFY_API_URL = "https://api.spotify.com/v1"
+ITUNES_SEARCH_URL = "https://itunes.apple.com/search"
 YOUTUBE_API_URL = "https://www.googleapis.com/youtube/v3"
-NEWS_API_URL = "https://newsapi.org/v2/everything"
+MEDIASTACK_API_URL = "http://api.mediastack.com/v1/news"
 NAVER_NEWS_API_URL = "https://openapi.naver.com/v1/search/news.json"
 SOLAR_CHAT_API_URL = "https://api.upstage.ai/v1/solar/chat/completions"
 
 ARTISTS: dict[str, dict[str, str]] = {
     "aespa": {
-        "spotify_query": "aespa",
+        "apple_query": "aespa",
         "youtube_query": "aespa official",
-        "global_news_query": 'aespa',
+        "global_news_query": "aespa",
         "naver_news_query": "에스파",
         "emoji": "🪩",
     },
     "BLACKPINK": {
-        "spotify_query": "BLACKPINK",
+        "apple_query": "BLACKPINK",
         "youtube_query": "BLACKPINK official",
-        "global_news_query": '"BLACKPINK"',
+        "global_news_query": "BLACKPINK",
         "naver_news_query": "블랙핑크",
         "emoji": "🖤",
     },
     "BTS": {
-        "spotify_query": "BTS",
+        "apple_query": "BTS",
         "youtube_query": "BTS official BANGTANTV",
-        "global_news_query": '"BTS" AND K-pop',
+        "global_news_query": "BTS K-pop",
         "naver_news_query": "방탄소년단",
         "emoji": "💜",
     },
     "IVE": {
-        "spotify_query": "IVE",
+        "apple_query": "IVE",
         "youtube_query": "IVE official",
-        "global_news_query": '"IVE" AND K-pop',
+        "global_news_query": "IVE K-pop",
         "naver_news_query": "아이브",
         "emoji": "✨",
     },
     "LE SSERAFIM": {
-        "spotify_query": "LE SSERAFIM",
+        "apple_query": "LE SSERAFIM",
         "youtube_query": "LE SSERAFIM official",
-        "global_news_query": '"LE SSERAFIM"',
+        "global_news_query": "LE SSERAFIM",
         "naver_news_query": "르세라핌",
         "emoji": "🔥",
     },
     "NCT DREAM": {
-        "spotify_query": "NCT DREAM",
+        "apple_query": "NCT DREAM",
         "youtube_query": "NCT DREAM official",
-        "global_news_query": '"NCT DREAM"',
+        "global_news_query": "NCT DREAM",
         "naver_news_query": "엔시티 드림",
         "emoji": "💚",
     },
     "NewJeans": {
-        "spotify_query": "NewJeans",
+        "apple_query": "NewJeans",
         "youtube_query": "NewJeans official",
-        "global_news_query": '"NewJeans"',
+        "global_news_query": "NewJeans",
         "naver_news_query": "뉴진스",
         "emoji": "🐰",
     },
     "RIIZE": {
-        "spotify_query": "RIIZE",
+        "apple_query": "RIIZE",
         "youtube_query": "RIIZE official",
-        "global_news_query": '"RIIZE" AND K-pop',
+        "global_news_query": "RIIZE K-pop",
         "naver_news_query": "라이즈",
         "emoji": "🌅",
     },
     "SEVENTEEN": {
-        "spotify_query": "SEVENTEEN",
+        "apple_query": "SEVENTEEN",
         "youtube_query": "SEVENTEEN official",
-        "global_news_query": '"SEVENTEEN" AND K-pop',
+        "global_news_query": "SEVENTEEN K-pop",
         "naver_news_query": "세븐틴",
         "emoji": "💎",
     },
     "Stray Kids": {
-        "spotify_query": "Stray Kids",
+        "apple_query": "Stray Kids",
         "youtube_query": "Stray Kids official",
-        "global_news_query": '"Stray Kids"',
+        "global_news_query": "Stray Kids",
         "naver_news_query": "스트레이 키즈",
         "emoji": "⚡",
     },
@@ -111,217 +109,516 @@ ARTISTS: dict[str, dict[str, str]] = {
 
 
 # =========================================================
-# 3. CSS
+# 3. BRIGHT UI CSS
 # =========================================================
 
 st.markdown(
     """
     <style>
-        .stApp {
-            background:
-                radial-gradient(circle at 15% 8%, rgba(139,92,246,.18), transparent 25%),
-                radial-gradient(circle at 85% 8%, rgba(236,72,153,.15), transparent 24%),
-                linear-gradient(180deg, #080a14 0%, #101427 100%);
-            color: #f7f7fb;
+        :root {
+            --ink: #242238;
+            --muted: #6d6980;
+            --purple: #6f5bd6;
+            --purple-dark: #4f3db1;
+            --pink: #dd6aa7;
+            --lavender: #eeeaff;
+            --glass: rgba(255, 255, 255, .72);
+            --glass-border: rgba(255, 255, 255, .84);
+            --soft-shadow: 0 14px 38px rgba(88, 72, 150, .10);
         }
 
-        [data-testid="stSidebar"] {
-            background: rgba(11,13,26,.97);
-            border-right: 1px solid rgba(255,255,255,.08);
+        html, body, [class*="css"] {
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "SF Pro Display",
+                "SF Pro Text",
+                "Pretendard",
+                "Noto Sans KR",
+                "Segoe UI",
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+        }
+
+        .stApp {
+            min-height: 100vh;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 7% 6%, rgba(219, 211, 255, .78), transparent 29%),
+                radial-gradient(circle at 94% 5%, rgba(255, 218, 239, .72), transparent 30%),
+                linear-gradient(180deg, #fffefe 0%, #f9f8ff 45%, #fff9fc 100%);
         }
 
         .block-container {
-            max-width: 1400px;
-            padding-top: 1.8rem;
+            max-width: 1420px;
+            padding-top: 1.6rem;
             padding-bottom: 3rem;
         }
 
-        .hero {
-            padding: 28px 30px;
-            border: 1px solid rgba(255,255,255,.10);
-            border-radius: 24px;
+        [data-testid="stSidebar"] {
             background:
-                linear-gradient(135deg, rgba(139,92,246,.20), rgba(236,72,153,.10)),
-                rgba(15,18,35,.84);
-            box-shadow: 0 18px 50px rgba(0,0,0,.28);
-            margin-bottom: 22px;
+                radial-gradient(circle at 30% 0%, rgba(255,255,255,.14), transparent 26%),
+                linear-gradient(180deg, #5544bd 0%, #6653cb 50%, #7b5fc9 100%);
+            border-right: 1px solid rgba(255,255,255,.22);
+        }
+
+        [data-testid="stSidebar"] label,
+        [data-testid="stSidebar"] p,
+        [data-testid="stSidebar"] h1,
+        [data-testid="stSidebar"] h2,
+        [data-testid="stSidebar"] h3,
+        [data-testid="stSidebar"] .stMarkdown span,
+        [data-testid="stSidebar"] .stCaptionContainer span {
+            color: #ffffff !important;
+        }
+
+        [data-testid="stSidebar"] .stButton > button {
+            color: var(--purple-dark) !important;
+            background: #ffffff;
+            border: 0;
+            border-radius: 13px;
+            font-weight: 800;
+            box-shadow: 0 8px 20px rgba(44, 31, 111, .18);
+        }
+
+        [data-testid="stSidebar"] .stButton > button * {
+            color: var(--purple-dark) !important;
+        }
+
+        [data-testid="stSidebar"] [data-baseweb="select"] > div {
+            background: #ffffff !important;
+            border-color: rgba(255,255,255,.92) !important;
+            border-radius: 12px;
+        }
+
+        [data-testid="stSidebar"] [data-baseweb="select"] input,
+        [data-testid="stSidebar"] [data-baseweb="select"] div,
+        [data-testid="stSidebar"] [data-baseweb="select"] span {
+            color: #111111 !important;
+            caret-color: #111111 !important;
+        }
+
+        [data-testid="stSidebar"] [data-baseweb="select"] svg {
+            color: #111111 !important;
+            fill: #111111 !important;
+        }
+
+        div[role="listbox"] {
+            background: #ffffff !important;
+        }
+
+        div[role="listbox"] *,
+        div[role="option"],
+        div[role="option"] * {
+            color: #111111 !important;
+        }
+
+        div[role="option"]:hover,
+        div[role="option"][aria-selected="true"] {
+            color: #111111 !important;
+            background: #eeeaff !important;
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 35px 37px;
+            margin-bottom: 24px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,.36);
+            background:
+                radial-gradient(circle at 84% 14%, rgba(255,255,255,.42), transparent 25%),
+                linear-gradient(125deg, #7564df 0%, #a56bd4 52%, #df79ad 100%);
+            box-shadow: 0 22px 54px rgba(94, 72, 172, .22);
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 245px;
+            height: 245px;
+            right: -62px;
+            bottom: -105px;
+            border-radius: 50%;
+            border: 40px solid rgba(255,255,255,.12);
         }
 
         .eyebrow {
-            color: #c4b5fd;
-            font-size: .78rem;
+            position: relative;
+            z-index: 1;
+            color: rgba(255,255,255,.88);
+            font-size: .77rem;
             font-weight: 800;
             letter-spacing: .18em;
             text-transform: uppercase;
-            margin-bottom: 8px;
+            margin-bottom: 9px;
         }
 
         .hero-title {
-            font-size: clamp(2rem, 4vw, 4rem);
+            position: relative;
+            z-index: 1;
+            color: #ffffff !important;
+            font-size: clamp(2.4rem, 4.8vw, 4.65rem);
             line-height: 1.02;
             font-weight: 900;
+            letter-spacing: -.052em;
+            text-shadow: 0 4px 20px rgba(55, 34, 120, .22);
             margin: 0;
-            background: linear-gradient(90deg, #fff, #d8b4fe, #f9a8d4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
         .hero-subtitle {
-            color: #b8bfd4;
-            margin-top: 13px;
-            font-size: 1rem;
-            max-width: 850px;
-            line-height: 1.65;
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin-top: 15px;
+            color: rgba(255,255,255,.96);
+            font-size: 1.02rem;
+            line-height: 1.68;
+            font-weight: 500;
+        }
+
+        .badge {
+            position: relative;
+            z-index: 1;
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 3px 4px 2px 0;
+            color: #ffffff;
+            font-size: .72rem;
+            font-weight: 800;
+            border-radius: 999px;
+            background: rgba(255,255,255,.18);
+            border: 1px solid rgba(255,255,255,.36);
         }
 
         .section-title {
-            font-size: 1.32rem;
+            color: #302b52;
+            font-size: 1.35rem;
             font-weight: 850;
-            margin: 14px 0;
+            letter-spacing: -.025em;
+            margin: 15px 0;
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: .90rem;
+            line-height: 1.58;
+        }
+
+        .glass-card,
+        .album-card,
+        .news-card,
+        div[data-testid="stMetric"],
+        div[data-testid="stChatMessage"] {
+            backdrop-filter: blur(18px) saturate(150%);
+            -webkit-backdrop-filter: blur(18px) saturate(150%);
         }
 
         .glass-card {
             height: 100%;
-            padding: 20px;
-            border-radius: 20px;
-            background: rgba(21,25,48,.86);
-            border: 1px solid rgba(255,255,255,.09);
-            box-shadow: 0 12px 35px rgba(0,0,0,.22);
+            padding: 21px;
+            border-radius: 22px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            box-shadow:
+                var(--soft-shadow),
+                inset 0 1px 0 rgba(255,255,255,.88);
         }
 
         .album-card {
             display: flex;
             gap: 18px;
             align-items: center;
-            padding: 18px;
-            border-radius: 20px;
-            background: rgba(21,25,48,.90);
-            border: 1px solid rgba(255,255,255,.09);
+            padding: 19px;
             margin-bottom: 14px;
+            border-radius: 23px;
+            background: rgba(255,255,255,.74);
+            border: 1px solid rgba(255,255,255,.86);
+            box-shadow:
+                0 14px 34px rgba(83,68,145,.10),
+                inset 0 1px 0 rgba(255,255,255,.90);
+            transition:
+                transform .28s cubic-bezier(.2,.8,.2,1),
+                box-shadow .28s ease,
+                border-color .28s ease;
+            will-change: transform;
+        }
+
+        .album-card:hover {
+            transform: translateY(-5px) scale(1.012);
+            border-color: rgba(111,86,215,.30);
+            box-shadow:
+                0 22px 48px rgba(83,68,145,.17),
+                inset 0 1px 0 rgba(255,255,255,.96);
         }
 
         .album-cover {
-            width: 116px;
-            height: 116px;
-            min-width: 116px;
-            border-radius: 16px;
+            width: 120px;
+            height: 120px;
+            min-width: 120px;
+            border-radius: 17px;
             object-fit: cover;
-            background: #282d4d;
+            background: linear-gradient(135deg, #e8e1ff, #ffdceb);
+            box-shadow: 0 9px 22px rgba(86,66,150,.14);
+            transition:
+                transform .28s cubic-bezier(.2,.8,.2,1),
+                box-shadow .28s ease;
+        }
+
+        .album-card:hover .album-cover {
+            transform: scale(1.035);
+            box-shadow: 0 15px 30px rgba(86,66,150,.20);
         }
 
         .album-name {
-            font-size: 1.12rem;
-            font-weight: 850;
             margin: 7px 0;
-        }
-
-        .muted {
-            color: #aeb5cb;
-            font-size: .9rem;
-            line-height: 1.55;
+            color: #282342;
+            font-size: 1.14rem;
+            font-weight: 900;
+            line-height: 1.35;
         }
 
         .score-card {
+            padding: 28px 19px;
             text-align: center;
-            padding: 26px 18px;
-            border-radius: 22px;
+            border-radius: 23px;
             background:
-                radial-gradient(circle at 50% 5%, rgba(236,72,153,.23), transparent 42%),
-                rgba(21,25,48,.90);
-            border: 1px solid rgba(255,255,255,.10);
+                radial-gradient(circle at 50% 0%, rgba(255,255,255,.82), transparent 36%),
+                linear-gradient(145deg, #eeeaff 0%, #ffeaf5 100%);
+            border: 1px solid rgba(111,91,205,.18);
+            box-shadow: 0 13px 32px rgba(92,70,166,.11);
         }
 
         .score-number {
-            font-size: 3.8rem;
+            margin-top: 5px;
+            color: #674fca;
+            font-size: 3.9rem;
             line-height: 1;
             font-weight: 950;
-            background: linear-gradient(90deg, #c4b5fd, #f9a8d4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
-        .news-card {
-            padding: 16px 17px;
-            margin-bottom: 11px;
-            border-radius: 17px;
-            background: rgba(21,25,48,.84);
-            border: 1px solid rgba(255,255,255,.08);
-        }
-
-        .news-title {
-            color: #fff;
-            font-weight: 800;
-            font-size: .98rem;
-            line-height: 1.45;
-            text-decoration: none;
-        }
-
-        .news-title:hover { color: #d8b4fe; }
-
-        .news-meta {
-            color: #959db9;
-            font-size: .78rem;
-            margin-top: 8px;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 9px;
-            border-radius: 999px;
-            font-size: .72rem;
-            font-weight: 750;
-            margin: 2px 3px 2px 0;
-            background: rgba(139,92,246,.16);
-            border: 1px solid rgba(196,181,253,.22);
-            color: #ddd6fe;
+        @keyframes metricRise {
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(.985);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         div[data-testid="stMetric"] {
-            background: rgba(21,25,48,.84);
-            border: 1px solid rgba(255,255,255,.08);
-            padding: 16px;
+            padding: 17px;
+            border-radius: 20px;
+            background: rgba(255,255,255,.73);
+            border: 1px solid rgba(255,255,255,.86);
+            box-shadow:
+                0 11px 30px rgba(83,68,140,.09),
+                inset 0 1px 0 rgba(255,255,255,.92);
+            animation: metricRise .62s cubic-bezier(.2,.8,.2,1) both;
+            transition: transform .22s ease, box-shadow .22s ease;
+        }
+
+        div[data-testid="stMetric"]:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 17px 36px rgba(83,68,140,.14),
+                inset 0 1px 0 rgba(255,255,255,.96);
+        }
+
+        div[data-testid="stMetric"] label,
+        div[data-testid="stMetric"] [data-testid="stMetricLabel"] {
+            color: #6b6880 !important;
+        }
+
+        div[data-testid="stMetric"] [data-testid="stMetricValue"] {
+            color: #2f294f !important;
+        }
+
+        div[data-testid="stHorizontalBlock"] > div:nth-child(1) div[data-testid="stMetric"] { animation-delay: .04s; }
+        div[data-testid="stHorizontalBlock"] > div:nth-child(2) div[data-testid="stMetric"] { animation-delay: .10s; }
+        div[data-testid="stHorizontalBlock"] > div:nth-child(3) div[data-testid="stMetric"] { animation-delay: .16s; }
+        div[data-testid="stHorizontalBlock"] > div:nth-child(4) div[data-testid="stMetric"] { animation-delay: .22s; }
+        div[data-testid="stHorizontalBlock"] > div:nth-child(5) div[data-testid="stMetric"] { animation-delay: .28s; }
+
+        .news-card {
+            padding: 16px 18px;
+            margin-bottom: 11px;
             border-radius: 18px;
+            background: rgba(255,255,255,.70);
+            border: 1px solid rgba(255,255,255,.84);
+            box-shadow: 0 10px 26px rgba(87,70,145,.08);
+        }
+
+        .news-title {
+            color: #302a54;
+            font-size: .99rem;
+            font-weight: 850;
+            line-height: 1.48;
+            text-decoration: none;
+        }
+
+        .news-title:hover {
+            color: var(--purple);
+        }
+
+        .news-meta {
+            margin-top: 8px;
+            color: #77738b;
+            font-size: .78rem;
         }
 
         div[data-testid="stChatMessage"] {
-            background: rgba(21,25,48,.70);
-            border: 1px solid rgba(255,255,255,.07);
-            border-radius: 17px;
             padding: 9px 13px;
+            color: #2d2943;
+            border-radius: 17px;
+            background: rgba(255,255,255,.74);
+            border: 1px solid rgba(255,255,255,.84);
         }
 
-        .stButton > button {
+        div[data-testid="stChatMessage"] * {
+            color: #2d2943;
+        }
+
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 8px;
+        }
+
+        .stTabs [data-baseweb="tab"] {
+            padding: 8px 16px;
             border-radius: 12px;
-            border: 1px solid rgba(255,255,255,.10);
-            font-weight: 750;
+            background: rgba(255,255,255,.72);
+        }
+
+        .stTabs [aria-selected="true"] {
+            color: #ffffff !important;
+            background: var(--purple) !important;
+        }
+
+        .stTabs [aria-selected="true"] * {
+            color: #ffffff !important;
+        }
+
+        .stAlert {
+            border-radius: 16px;
         }
 
         @media (max-width: 700px) {
             .block-container {
-                padding: 1rem;
+                padding: .85rem .9rem 2rem;
             }
 
             .hero {
-                padding: 21px 19px;
-                border-radius: 19px;
+                padding: 23px 19px;
+                margin-bottom: 18px;
+                border-radius: 22px;
             }
 
-            .hero-title { font-size: 2.15rem; }
-            .hero-subtitle { font-size: .91rem; }
+            .eyebrow {
+                font-size: .68rem;
+                letter-spacing: .14em;
+            }
+
+            .hero-title {
+                font-size: clamp(2.05rem, 11vw, 2.55rem);
+                line-height: 1.05;
+                letter-spacing: -.045em;
+            }
+
+            .hero-subtitle {
+                font-size: .91rem;
+                line-height: 1.58;
+            }
+
+            .section-title {
+                margin: 12px 0;
+                font-size: 1.15rem;
+            }
 
             .album-card {
                 align-items: flex-start;
                 gap: 12px;
                 padding: 14px;
+                border-radius: 19px;
+            }
+
+            .album-card:hover {
+                transform: none;
             }
 
             .album-cover {
                 width: 86px;
                 height: 86px;
                 min-width: 86px;
+                border-radius: 14px;
             }
 
-            .score-number { font-size: 3rem; }
+            .album-name {
+                font-size: 1rem;
+            }
+
+            .muted {
+                font-size: .82rem;
+            }
+
+            div[data-testid="stMetric"] {
+                padding: 13px;
+                border-radius: 16px;
+            }
+
+            div[data-testid="stMetric"] [data-testid="stMetricValue"] {
+                font-size: 1.28rem !important;
+            }
+
+            .score-card {
+                padding: 22px 15px;
+                border-radius: 19px;
+            }
+
+            .score-number {
+                font-size: 3rem;
+            }
+
+            div[data-testid="stChatMessage"] {
+                padding: 8px 10px;
+            }
+
+            .stTabs [data-baseweb="tab"] {
+                padding: 7px 11px;
+                font-size: .86rem;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: .86rem;
+            }
+
+            .album-cover {
+                width: 76px;
+                height: 76px;
+                min-width: 76px;
+            }
+
+            .album-card {
+                gap: 10px;
+                padding: 12px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+                scroll-behavior: auto !important;
+            }
         }
     </style>
     """,
@@ -330,7 +627,7 @@ st.markdown(
 
 
 # =========================================================
-# 4. GENERIC HELPERS
+# 4. HELPERS
 # =========================================================
 
 def get_secret(name: str, default: str = "") -> str:
@@ -346,7 +643,6 @@ def safe_request(
     *,
     headers: dict[str, str] | None = None,
     params: dict[str, Any] | None = None,
-    data: dict[str, Any] | None = None,
     json_body: dict[str, Any] | None = None,
     timeout: int = 20,
 ) -> dict[str, Any]:
@@ -356,7 +652,6 @@ def safe_request(
             url=url,
             headers=headers,
             params=params,
-            data=data,
             json=json_body,
             timeout=timeout,
         )
@@ -385,27 +680,22 @@ def escape_text(value: Any) -> str:
 def strip_html_tags(value: str | None) -> str:
     if not value:
         return ""
-    clean = re.sub(r"<[^>]+>", "", value)
-    return html.unescape(clean).strip()
+    return html.unescape(re.sub(r"<[^>]+>", "", value)).strip()
 
 
 def parse_datetime(value: str | None) -> datetime | None:
     if not value:
         return None
 
-    formats = (
-        None,
-        "%a, %d %b %Y %H:%M:%S %z",
-        "%Y-%m-%d",
-    )
+    formats = (None, "%a, %d %b %Y %H:%M:%S %z", "%Y-%m-%d")
 
     for date_format in formats:
         try:
-            if date_format is None:
-                parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
-            else:
-                parsed = datetime.strptime(value, date_format)
-
+            parsed = (
+                datetime.fromisoformat(value.replace("Z", "+00:00"))
+                if date_format is None
+                else datetime.strptime(value, date_format)
+            )
             if parsed.tzinfo is None:
                 parsed = parsed.replace(tzinfo=timezone.utc)
             return parsed
@@ -440,13 +730,6 @@ def format_number(value: int | float | str | None) -> str:
     if number >= 1_000:
         return f"{number / 1_000:.1f}K"
     return f"{int(number):,}"
-
-
-def normalize_popularity(value: int | float | None) -> float:
-    try:
-        return max(0.0, min(float(value or 0), 100.0))
-    except (TypeError, ValueError):
-        return 0.0
 
 
 def normalize_youtube_views(value: int | float | None) -> float:
@@ -488,119 +771,124 @@ def score_label(score: float) -> str:
     return "📡 레이더 탐색 중"
 
 
+def artist_name_matches(result_artist: str, target_artist: str) -> bool:
+    result = re.sub(r"[^a-z0-9가-힣]", "", result_artist.casefold())
+    target = re.sub(r"[^a-z0-9가-힣]", "", target_artist.casefold())
+    return result == target or target in result or result in target
+
+
 # =========================================================
-# 5. SPOTIFY
+# 5. APPLE ITUNES SEARCH API
 # =========================================================
-
-@st.cache_data(ttl=300, show_spinner=False)
-def get_spotify_token(client_id: str, client_secret: str) -> str:
-    encoded = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
-
-    result = safe_request(
-        "POST",
-        SPOTIFY_TOKEN_URL,
-        headers={
-            "Authorization": f"Basic {encoded}",
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-        data={"grant_type": "client_credentials"},
-    )
-
-    token = result.get("access_token")
-    if not token:
-        raise RuntimeError("Spotify access token을 받지 못했습니다.")
-    return token
-
 
 @st.cache_data(ttl=1800, show_spinner=False)
-def get_spotify_data(
-    artist_query: str,
-    client_id: str,
-    client_secret: str,
-) -> dict[str, Any]:
-    token = get_spotify_token(client_id, client_secret)
-    headers = {"Authorization": f"Bearer {token}"}
-
-    search_result = safe_request(
+def get_apple_music_data(artist_query: str) -> dict[str, Any]:
+    album_result = safe_request(
         "GET",
-        f"{SPOTIFY_API_URL}/search",
-        headers=headers,
-        params={"q": artist_query, "type": "artist", "limit": 5},
-    )
-
-    candidates = search_result.get("artists", {}).get("items", [])
-    if not candidates:
-        raise RuntimeError("Spotify에서 아티스트를 찾지 못했습니다.")
-
-    artist = next(
-        (
-            item for item in candidates
-            if item.get("name", "").casefold() == artist_query.casefold()
-        ),
-        candidates[0],
-    )
-
-    artist_id = artist["id"]
-
-    tracks_result = safe_request(
-        "GET",
-        f"{SPOTIFY_API_URL}/artists/{artist_id}/top-tracks",
-        headers=headers,
-        params={"market": "KR"},
-    )
-
-    albums_result = safe_request(
-        "GET",
-        f"{SPOTIFY_API_URL}/artists/{artist_id}/albums",
-        headers=headers,
+        ITUNES_SEARCH_URL,
         params={
-            "include_groups": "album,single",
-            "market": "KR",
-            "limit": 30,
+            "term": artist_query,
+            "country": "KR",
+            "media": "music",
+            "entity": "album",
+            "attribute": "artistTerm",
+            "limit": 50,
         },
     )
 
-    albums = albums_result.get("items", [])
+    track_result = safe_request(
+        "GET",
+        ITUNES_SEARCH_URL,
+        params={
+            "term": artist_query,
+            "country": "KR",
+            "media": "music",
+            "entity": "musicTrack",
+            "attribute": "artistTerm",
+            "limit": 50,
+        },
+    )
+
+    raw_albums = album_result.get("results", [])
+    raw_tracks = track_result.get("results", [])
+
+    albums = [
+        item for item in raw_albums
+        if artist_name_matches(item.get("artistName", ""), artist_query)
+    ]
+    tracks = [
+        item for item in raw_tracks
+        if artist_name_matches(item.get("artistName", ""), artist_query)
+    ]
+
+    if not albums and not tracks:
+        raise RuntimeError("Apple 카탈로그에서 아티스트 데이터를 찾지 못했습니다.")
+
     unique_albums: list[dict[str, Any]] = []
-    seen: set[str] = set()
+    seen_album_ids: set[str] = set()
 
     for album in albums:
-        key = album.get("name", "").strip().casefold()
-        if key and key not in seen:
-            seen.add(key)
+        key = str(album.get("collectionId") or album.get("collectionName", "")).strip()
+        if key and key not in seen_album_ids:
+            seen_album_ids.add(key)
             unique_albums.append(album)
 
-    unique_albums.sort(key=lambda x: x.get("release_date", ""), reverse=True)
+    unique_albums.sort(
+        key=lambda item: item.get("releaseDate", ""),
+        reverse=True,
+    )
+
     latest = unique_albums[0] if unique_albums else {}
 
-    artist_images = artist.get("images", [])
-    album_images = latest.get("images", [])
+    # 검색 결과 순서는 Apple의 관련도 순서이므로 '인기도'로 표현하지 않습니다.
+    selected_tracks = tracks[:10]
+
+    artwork = latest.get("artworkUrl100", "")
+    artwork_high_res = artwork.replace("100x100bb", "600x600bb") if artwork else ""
 
     return {
         "artist": {
-            "name": artist.get("name", artist_query),
-            "followers": artist.get("followers", {}).get("total", 0),
-            "popularity": artist.get("popularity", 0),
-            "genres": artist.get("genres", []),
-            "image": artist_images[0]["url"] if artist_images else "",
-            "spotify_url": artist.get("external_urls", {}).get("spotify", ""),
+            "name": (
+                latest.get("artistName")
+                or (selected_tracks[0].get("artistName") if selected_tracks else artist_query)
+            ),
+            "genre": (
+                latest.get("primaryGenreName")
+                or (selected_tracks[0].get("primaryGenreName") if selected_tracks else "K-Pop")
+            ),
+            "catalog_albums": len(unique_albums),
+            "catalog_tracks": len(tracks),
+            "artist_url": latest.get("artistViewUrl", ""),
         },
         "latest_album": {
-            "name": latest.get("name", "앨범 정보 없음"),
-            "release_date": latest.get("release_date", ""),
-            "album_type": latest.get("album_type", ""),
-            "total_tracks": latest.get("total_tracks", 0),
-            "image": album_images[0]["url"] if album_images else "",
-            "spotify_url": latest.get("external_urls", {}).get("spotify", ""),
+            "name": latest.get("collectionName", "앨범 정보 없음"),
+            "release_date": latest.get("releaseDate", ""),
+            "album_type": latest.get("collectionType", "Album"),
+            "total_tracks": latest.get("trackCount", 0),
+            "image": artwork_high_res,
+            "apple_url": latest.get("collectionViewUrl", ""),
+            "copyright": latest.get("copyright", ""),
         },
-        "top_tracks": [
+        "tracks": [
             {
-                "name": track.get("name", ""),
-                "popularity": track.get("popularity", 0),
-                "album": track.get("album", {}).get("name", ""),
-                "spotify_url": track.get("external_urls", {}).get("spotify", ""),
+                "name": track.get("trackName", ""),
+                "album": track.get("collectionName", ""),
+                "release_date": track.get("releaseDate", ""),
+                "duration_ms": track.get("trackTimeMillis", 0),
+                "preview_url": track.get("previewUrl", ""),
+                "apple_url": track.get("trackViewUrl", ""),
+                "track_number": track.get("trackNumber", 0),
             }
-            for track in tracks_result.get("tracks", [])[:10]
+            for track in selected_tracks
+        ],
+        "albums": [
+            {
+                "name": album.get("collectionName", ""),
+                "release_date": album.get("releaseDate", ""),
+                "track_count": album.get("trackCount", 0),
+                "apple_url": album.get("collectionViewUrl", ""),
+            }
+            for album in unique_albums[:10]
         ],
     }
 
@@ -675,40 +963,48 @@ def get_youtube_data(search_query: str, api_key: str) -> list[dict[str, Any]]:
 
 
 # =========================================================
-# 7. NEWSAPI: GLOBAL NEWS
+# 7. MEDIASTACK
 # =========================================================
 
 @st.cache_data(ttl=1800, show_spinner=False)
 def get_global_news(query: str, api_key: str) -> list[dict[str, Any]]:
     result = safe_request(
         "GET",
-        NEWS_API_URL,
-        headers={"X-Api-Key": api_key},
+        MEDIASTACK_API_URL,
         params={
-            "q": query,
-            "language": "en",
-            "sortBy": "publishedAt",
-            "pageSize": 10,
+            "access_key": api_key,
+            "keywords": query,
+            "languages": "en",
+            "sort": "published_desc",
+            "limit": 10,
+            "offset": 0,
         },
     )
+
+    if result.get("error"):
+        error = result["error"]
+        raise RuntimeError(
+            f"{error.get('code', 'unknown_error')}: "
+            f"{error.get('message', 'Mediastack API 오류')}"
+        )
 
     return [
         {
             "title": article.get("title", ""),
             "description": article.get("description", ""),
-            "source": article.get("source", {}).get("name", ""),
-            "published_at": article.get("publishedAt", ""),
+            "source": article.get("source", ""),
+            "published_at": article.get("published_at", ""),
             "url": article.get("url", ""),
-            "image": article.get("urlToImage", ""),
+            "image": article.get("image", ""),
             "channel": "Global",
         }
-        for article in result.get("articles", [])
+        for article in result.get("data", [])
         if article.get("title") and article.get("url")
     ]
 
 
 # =========================================================
-# 8. NAVER SEARCH API: KOREAN NEWS
+# 8. NAVER NEWS
 # =========================================================
 
 @st.cache_data(ttl=1800, show_spinner=False)
@@ -732,23 +1028,17 @@ def get_naver_news(
         },
     )
 
-    news: list[dict[str, Any]] = []
-
-    for item in result.get("items", []):
-        news.append(
-            {
-                "title": strip_html_tags(item.get("title")),
-                "description": strip_html_tags(item.get("description")),
-                "source": "네이버 뉴스",
-                "published_at": item.get("pubDate", ""),
-                "url": item.get("originallink") or item.get("link", ""),
-                "naver_url": item.get("link", ""),
-                "image": "",
-                "channel": "Korea",
-            }
-        )
-
-    return news
+    return [
+        {
+            "title": strip_html_tags(item.get("title")),
+            "description": strip_html_tags(item.get("description")),
+            "source": "네이버 뉴스",
+            "published_at": item.get("pubDate", ""),
+            "url": item.get("originallink") or item.get("link", ""),
+            "channel": "Korea",
+        }
+        for item in result.get("items", [])
+    ]
 
 
 # =========================================================
@@ -759,30 +1049,53 @@ def get_demo_bundle(artist_name: str) -> dict[str, Any]:
     today = datetime.now(timezone.utc).isoformat()
 
     return {
-        "spotify": {
+        "apple": {
             "artist": {
                 "name": artist_name,
-                "followers": 12_540_000,
-                "popularity": 84,
-                "genres": ["k-pop", "korean pop"],
-                "image": "",
-                "spotify_url": "",
+                "genre": "K-Pop",
+                "catalog_albums": 12,
+                "catalog_tracks": 42,
+                "artist_url": "",
             },
             "latest_album": {
                 "name": f"{artist_name} Demo Album",
-                "release_date": datetime.now().strftime("%Y-%m-%d"),
-                "album_type": "album",
+                "release_date": today,
+                "album_type": "Album",
                 "total_tracks": 8,
                 "image": "",
-                "spotify_url": "",
+                "apple_url": "",
+                "copyright": "",
             },
-            "top_tracks": [
-                {"name": "Demo Track A", "popularity": 91, "album": "Demo Album", "spotify_url": ""},
-                {"name": "Demo Track B", "popularity": 86, "album": "Demo Album", "spotify_url": ""},
-                {"name": "Demo Track C", "popularity": 79, "album": "Demo Album", "spotify_url": ""},
-                {"name": "Demo Track D", "popularity": 73, "album": "Demo Album", "spotify_url": ""},
-                {"name": "Demo Track E", "popularity": 67, "album": "Demo Album", "spotify_url": ""},
+            "tracks": [
+                {
+                    "name": "Demo Track A",
+                    "album": "Demo Album",
+                    "release_date": today,
+                    "duration_ms": 192000,
+                    "preview_url": "",
+                    "apple_url": "",
+                    "track_number": 1,
+                },
+                {
+                    "name": "Demo Track B",
+                    "album": "Demo Album",
+                    "release_date": today,
+                    "duration_ms": 205000,
+                    "preview_url": "",
+                    "apple_url": "",
+                    "track_number": 2,
+                },
+                {
+                    "name": "Demo Track C",
+                    "album": "Demo Album",
+                    "release_date": today,
+                    "duration_ms": 186000,
+                    "preview_url": "",
+                    "apple_url": "",
+                    "track_number": 3,
+                },
             ],
+            "albums": [],
         },
         "youtube": [
             {
@@ -815,19 +1128,16 @@ def get_demo_bundle(artist_name: str) -> dict[str, Any]:
                 "source": "Demo Global News",
                 "published_at": today,
                 "url": "",
-                "image": "",
                 "channel": "Global",
             }
         ],
         "naver_news": [
             {
                 "title": f"{artist_name}, 컴백 기대감 높이는 새로운 콘텐츠 공개",
-                "description": "API 키가 없을 때 표시되는 국내 데모 뉴스입니다.",
+                "description": "국내 데모 뉴스입니다.",
                 "source": "네이버 뉴스 데모",
                 "published_at": today,
                 "url": "",
-                "naver_url": "",
-                "image": "",
                 "channel": "Korea",
             }
         ],
@@ -839,18 +1149,17 @@ def get_demo_bundle(artist_name: str) -> dict[str, Any]:
 # =========================================================
 
 def calculate_comeback_score(
-    spotify_data: dict[str, Any],
+    apple_data: dict[str, Any],
     youtube_data: list[dict[str, Any]],
     global_news: list[dict[str, Any]],
     naver_news: list[dict[str, Any]],
 ) -> tuple[float, dict[str, float]]:
-    spotify_score = normalize_popularity(
-        spotify_data.get("artist", {}).get("popularity", 0)
+    release_score = freshness_score(
+        apple_data.get("latest_album", {}).get("release_date")
     )
 
-    release_score = freshness_score(
-        spotify_data.get("latest_album", {}).get("release_date")
-    )
+    catalog_tracks = apple_data.get("artist", {}).get("catalog_tracks", 0)
+    catalog_score = min(float(catalog_tracks) / 50 * 100, 100)
 
     top_video_views = max(
         (video.get("views", 0) for video in youtube_data),
@@ -859,31 +1168,33 @@ def calculate_comeback_score(
     youtube_score = normalize_youtube_views(top_video_views)
 
     recent_global = sum(
-        1 for article in global_news
-        if days_since(article.get("published_at")) is not None
-        and days_since(article.get("published_at")) <= 30
+        1
+        for article in global_news
+        if (age := days_since(article.get("published_at"))) is not None and age <= 30
     )
-
     recent_korean = sum(
-        1 for article in naver_news
-        if days_since(article.get("published_at")) is not None
-        and days_since(article.get("published_at")) <= 30
+        1
+        for article in naver_news
+        if (age := days_since(article.get("published_at"))) is not None and age <= 30
     )
 
-    news_score = min((recent_global + recent_korean) / 20 * 100, 100)
+    global_news_score = min(recent_global / 10 * 100, 100)
+    korean_news_score = min(recent_korean / 10 * 100, 100)
 
     components = {
-        "Spotify 인기도": round(spotify_score, 1),
         "발매 최신성": round(release_score, 1),
         "YouTube 반응": round(youtube_score, 1),
-        "뉴스 화제성": round(news_score, 1),
+        "글로벌 뉴스": round(global_news_score, 1),
+        "국내 뉴스": round(korean_news_score, 1),
+        "Apple 카탈로그": round(catalog_score, 1),
     }
 
     total = (
-        components["Spotify 인기도"] * 0.30
-        + components["발매 최신성"] * 0.30
-        + components["YouTube 반응"] * 0.25
-        + components["뉴스 화제성"] * 0.15
+        components["발매 최신성"] * 0.30
+        + components["YouTube 반응"] * 0.35
+        + components["글로벌 뉴스"] * 0.15
+        + components["국내 뉴스"] * 0.15
+        + components["Apple 카탈로그"] * 0.05
     )
 
     return round(total, 1), components
@@ -895,58 +1206,54 @@ def calculate_comeback_score(
 
 def build_ai_context(
     artist_name: str,
-    spotify_data: dict[str, Any],
+    apple_data: dict[str, Any],
     youtube_data: list[dict[str, Any]],
     global_news: list[dict[str, Any]],
     naver_news: list[dict[str, Any]],
     score: float,
     components: dict[str, float],
 ) -> str:
-    artist = spotify_data.get("artist", {})
-    album = spotify_data.get("latest_album", {})
-    tracks = spotify_data.get("top_tracks", [])
+    artist = apple_data.get("artist", {})
+    album = apple_data.get("latest_album", {})
+    tracks = apple_data.get("tracks", [])
 
     track_text = "\n".join(
-        f"- {x.get('name')} / popularity {x.get('popularity')}"
-        for x in tracks[:5]
+        f"- {track.get('name')} / album {track.get('album')} / "
+        f"release {format_date(track.get('release_date'))}"
+        for track in tracks[:6]
     ) or "- 데이터 없음"
 
     youtube_text = "\n".join(
-        (
-            f"- {x.get('title')} / views {x.get('views', 0):,} / "
-            f"published {format_date(x.get('published_at'))}"
-        )
-        for x in youtube_data[:5]
+        f"- {video.get('title')} / views {video.get('views', 0):,} / "
+        f"published {format_date(video.get('published_at'))}"
+        for video in youtube_data[:5]
     ) or "- 데이터 없음"
 
     global_text = "\n".join(
-        (
-            f"- {x.get('title')} / {x.get('source')} / "
-            f"{format_date(x.get('published_at'))}"
-        )
-        for x in global_news[:6]
+        f"- {article.get('title')} / {article.get('source')} / "
+        f"{format_date(article.get('published_at'))}"
+        for article in global_news[:6]
     ) or "- 데이터 없음"
 
     korean_text = "\n".join(
-        (
-            f"- {x.get('title')} / {x.get('source')} / "
-            f"{format_date(x.get('published_at'))}"
-        )
-        for x in naver_news[:6]
+        f"- {article.get('title')} / {article.get('source')} / "
+        f"{format_date(article.get('published_at'))}"
+        for article in naver_news[:6]
     ) or "- 데이터 없음"
 
     return f"""
 분석 대상: {artist_name}
 
-[Spotify]
-인기도: {artist.get('popularity', 0)}
-팔로워: {artist.get('followers', 0):,}
-장르: {', '.join(artist.get('genres', []))}
+[Apple iTunes Search]
+아티스트: {artist.get('name')}
+장르: {artist.get('genre')}
+검색된 앨범 수: {artist.get('catalog_albums')}
+검색된 트랙 수: {artist.get('catalog_tracks')}
 최신 앨범: {album.get('name')}
 발매일: {album.get('release_date')}
 트랙 수: {album.get('total_tracks')}
 
-인기곡:
+검색 트랙:
 {track_text}
 
 [YouTube]
@@ -962,11 +1269,11 @@ def build_ai_context(
 총점: {score}/100
 세부 점수: {components}
 
-분석 규칙:
+주의:
+- Apple 검색 결과 순서는 공식 인기 순위가 아니라 검색 관련도 순서다.
 - 위 데이터에 없는 사실은 만들어내지 않는다.
-- 기사 제목만으로 기사 전체 내용을 아는 것처럼 단정하지 않는다.
+- 기사 제목만으로 기사 전문을 읽은 것처럼 단정하지 않는다.
 - 상관관계와 인과관계를 구분한다.
-- 수치는 수집 시점 기준이라고 설명한다.
 - 불확실한 해석은 가능성 또는 추정이라고 표시한다.
 """.strip()
 
@@ -979,10 +1286,7 @@ def ask_solar(
     chat_history: list[dict[str, str]],
 ) -> str:
     recent_history = [
-        {
-            "role": message["role"],
-            "content": message["content"],
-        }
+        {"role": message["role"], "content": message["content"]}
         for message in chat_history[-6:]
         if message.get("role") in {"user", "assistant"}
     ]
@@ -994,10 +1298,10 @@ def ask_solar(
 1. 한국어로 답합니다.
 2. 핵심 결론을 먼저 제시합니다.
 3. 제공된 데이터에 근거해 숫자를 구체적으로 활용합니다.
-4. 데이터 사실과 해석을 구분합니다.
-5. 글로벌 뉴스와 국내 뉴스를 필요할 때 비교합니다.
-6. 불확실한 내용은 추정이라고 명확히 표시합니다.
-7. 답변은 간결한 소제목과 문단으로 작성합니다.
+4. 사실과 해석을 구분합니다.
+5. 국내 반응과 해외 반응을 필요할 때 비교합니다.
+6. 불확실한 내용은 추정이라고 표시합니다.
+7. Apple 검색 결과를 인기 순위라고 표현하지 않습니다.
 
 현재 분석 데이터:
 {data_context}
@@ -1034,12 +1338,12 @@ def generate_fallback_answer(
     question: str,
     score: float,
     components: dict[str, float],
-    spotify_data: dict[str, Any],
+    apple_data: dict[str, Any],
     youtube_data: list[dict[str, Any]],
     global_news: list[dict[str, Any]],
     naver_news: list[dict[str, Any]],
 ) -> str:
-    album = spotify_data.get("latest_album", {})
+    album = apple_data.get("latest_album", {})
     strongest = max(components, key=components.get)
     weakest = min(components, key=components.get)
     top_video = max(youtube_data, key=lambda x: x.get("views", 0), default={})
@@ -1050,7 +1354,7 @@ def generate_fallback_answer(
 가장 강한 신호는 **{strongest} {components[strongest]}점**, 상대적으로 약한 신호는
 **{weakest} {components[weakest]}점**입니다.
 
-- 최신 확인 앨범: **{album.get("name", "정보 없음")}**
+- Apple 최신 확인 앨범: **{album.get("name", "정보 없음")}**
 - 발매일: **{format_date(album.get("release_date"))}**
 - 최근 영상 중 최고 조회수: **{format_number(top_video.get("views", 0))}**
 - 글로벌 뉴스: **{len(global_news)}건**
@@ -1067,10 +1371,10 @@ def generate_fallback_answer(
 # 12. RENDERING
 # =========================================================
 
-def render_album_card(artist_name: str, spotify_data: dict[str, Any]) -> None:
-    album = spotify_data.get("latest_album", {})
+def render_album_card(artist_name: str, apple_data: dict[str, Any]) -> None:
+    album = apple_data.get("latest_album", {})
     image_url = album.get("image", "")
-    spotify_url = album.get("spotify_url", "")
+    apple_url = album.get("apple_url", "")
 
     image_html = (
         f'<img class="album-cover" src="{escape_text(image_url)}" '
@@ -1078,15 +1382,15 @@ def render_album_card(artist_name: str, spotify_data: dict[str, Any]) -> None:
         if image_url
         else (
             '<div class="album-cover" style="display:flex;align-items:center;'
-            'justify-content:center;font-size:2.1rem;">💿</div>'
+            'justify-content:center;font-size:2.1rem;">🍎</div>'
         )
     )
 
     link_html = (
-        f'<div style="margin-top:10px;"><a href="{escape_text(spotify_url)}" '
-        'target="_blank" style="color:#c4b5fd;text-decoration:none;'
-        'font-weight:700;">Spotify에서 열기 ↗</a></div>'
-        if spotify_url
+        f'<div style="margin-top:10px;"><a href="{escape_text(apple_url)}" '
+        'target="_blank" style="color:#6957d9;text-decoration:none;'
+        'font-weight:800;">Apple Music에서 열기 ↗</a></div>'
+        if apple_url
         else ""
     )
 
@@ -1095,11 +1399,11 @@ def render_album_card(artist_name: str, spotify_data: dict[str, Any]) -> None:
         <div class="album-card">
             {image_html}
             <div>
-                <div class="muted">{escape_text(artist_name)} · Latest Release</div>
+                <div class="muted">{escape_text(artist_name)} · Apple Latest Release</div>
                 <div class="album-name">{escape_text(album.get("name", "앨범 정보 없음"))}</div>
                 <div class="muted">
                     발매일 {escape_text(format_date(album.get("release_date")))}<br>
-                    {escape_text(album.get("album_type", "-"))} ·
+                    {escape_text(album.get("album_type", "Album"))} ·
                     {escape_text(album.get("total_tracks", 0))} tracks
                 </div>
                 {link_html}
@@ -1108,6 +1412,34 @@ def render_album_card(artist_name: str, spotify_data: dict[str, Any]) -> None:
         """,
         unsafe_allow_html=True,
     )
+
+
+def render_track_list(tracks: list[dict[str, Any]]) -> None:
+    if not tracks:
+        st.info("Apple 카탈로그에서 표시할 트랙을 찾지 못했습니다.")
+        return
+
+    for index, track in enumerate(tracks[:8], start=1):
+        with st.container(border=True):
+            col1, col2 = st.columns([4, 1])
+
+            with col1:
+                apple_url = track.get("apple_url", "")
+                title = track.get("name", "제목 없음")
+                st.markdown(
+                    f"**{index}. [{title}]({apple_url})**"
+                    if apple_url
+                    else f"**{index}. {title}**"
+                )
+                st.caption(
+                    f"{track.get('album', '')} · "
+                    f"{format_date(track.get('release_date'))}"
+                )
+
+            with col2:
+                preview_url = track.get("preview_url", "")
+                if preview_url:
+                    st.audio(preview_url, format="audio/mpeg")
 
 
 def render_news_cards(news_items: list[dict[str, Any]]) -> None:
@@ -1173,18 +1505,15 @@ def render_youtube_videos(videos: list[dict[str, Any]]) -> None:
 # 13. SECRETS / SIDEBAR
 # =========================================================
 
-spotify_client_id = get_secret("SPOTIFY_CLIENT_ID")
-spotify_client_secret = get_secret("SPOTIFY_CLIENT_SECRET")
 youtube_api_key = get_secret("YOUTUBE_API_KEY")
-news_api_key = get_secret("NEWS_API_KEY")
+mediastack_api_key = get_secret("MEDIASTACK_API_KEY")
 naver_client_id = get_secret("NAVER_CLIENT_ID")
 naver_client_secret = get_secret("NAVER_CLIENT_SECRET")
 solar_api_key = get_secret("SOLAR_API_KEY")
-solar_model = get_secret("SOLAR_MODEL", "solar-pro2")
+solar_model = get_secret("SOLAR_MODEL", "solar-pro3")
 
-spotify_connected = bool(spotify_client_id and spotify_client_secret)
 youtube_connected = bool(youtube_api_key)
-news_connected = bool(news_api_key)
+mediastack_connected = bool(mediastack_api_key)
 naver_connected = bool(naver_client_id and naver_client_secret)
 solar_connected = bool(solar_api_key)
 
@@ -1199,13 +1528,16 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("### 데이터 연결 상태")
-    st.write(f"{'🟢' if spotify_connected else '⚪'} Spotify")
+    st.write("🟢 Apple Music Catalog")
     st.write(f"{'🟢' if youtube_connected else '⚪'} YouTube")
-    st.write(f"{'🟢' if news_connected else '⚪'} NewsAPI")
+    st.write(f"{'🟢' if mediastack_connected else '⚪'} Mediastack")
     st.write(f"{'🟢' if naver_connected else '⚪'} 네이버 뉴스")
     st.write(f"{'🟢' if solar_connected else '⚪'} Solar AI")
 
-    st.caption("연결되지 않은 API는 데모 데이터 또는 규칙 기반 답변으로 대체됩니다.")
+    st.caption(
+        "Apple 검색 API는 별도 키 없이 작동합니다. "
+        "연결되지 않은 다른 API는 데모 데이터 또는 규칙 기반 답변으로 대체됩니다."
+    )
 
     st.markdown("---")
 
@@ -1227,35 +1559,31 @@ with st.sidebar:
 config = ARTISTS[selected_artist]
 demo = get_demo_bundle(selected_artist)
 
-spotify_data = demo["spotify"]
+apple_data = demo["apple"]
 youtube_data = demo["youtube"]
 global_news = demo["global_news"]
 naver_news = demo["naver_news"]
 
 active_sources: list[str] = []
 api_errors: list[str] = []
+demo_sources: list[str] = []
 
 if demo_mode:
     active_sources = [
-        "Spotify Demo",
+        "Apple Demo",
         "YouTube Demo",
         "Global News Demo",
         "Korean News Demo",
     ]
+    demo_sources = ["Apple", "YouTube", "Mediastack", "네이버 뉴스"]
 else:
-    if spotify_connected:
-        try:
-            spotify_data = get_spotify_data(
-                config["spotify_query"],
-                spotify_client_id,
-                spotify_client_secret,
-            )
-            active_sources.append("Spotify Live")
-        except RuntimeError as error:
-            api_errors.append(f"Spotify: {error}")
-            active_sources.append("Spotify Demo")
-    else:
-        active_sources.append("Spotify Demo")
+    try:
+        apple_data = get_apple_music_data(config["apple_query"])
+        active_sources.append("Apple Live")
+    except RuntimeError as error:
+        api_errors.append(f"Apple: {error}")
+        active_sources.append("Apple Demo")
+        demo_sources.append("Apple")
 
     if youtube_connected:
         try:
@@ -1267,21 +1595,25 @@ else:
         except RuntimeError as error:
             api_errors.append(f"YouTube: {error}")
             active_sources.append("YouTube Demo")
+            demo_sources.append("YouTube")
     else:
         active_sources.append("YouTube Demo")
+        demo_sources.append("YouTube")
 
-    if news_connected:
+    if mediastack_connected:
         try:
             global_news = get_global_news(
                 config["global_news_query"],
-                news_api_key,
+                mediastack_api_key,
             )
-            active_sources.append("NewsAPI Live")
+            active_sources.append("Mediastack Live")
         except RuntimeError as error:
-            api_errors.append(f"NewsAPI: {error}")
+            api_errors.append(f"Mediastack: {error}")
             active_sources.append("Global News Demo")
+            demo_sources.append("Mediastack")
     else:
         active_sources.append("Global News Demo")
+        demo_sources.append("Mediastack")
 
     if naver_connected:
         try:
@@ -1294,11 +1626,13 @@ else:
         except RuntimeError as error:
             api_errors.append(f"Naver: {error}")
             active_sources.append("Korean News Demo")
+            demo_sources.append("네이버 뉴스")
     else:
         active_sources.append("Korean News Demo")
+        demo_sources.append("네이버 뉴스")
 
 score, components = calculate_comeback_score(
-    spotify_data,
+    apple_data,
     youtube_data,
     global_news,
     naver_news,
@@ -1306,7 +1640,7 @@ score, components = calculate_comeback_score(
 
 
 # =========================================================
-# 15. HEADER / METRICS
+# 15. HEADER / SUMMARY
 # =========================================================
 
 badges = "".join(
@@ -1317,15 +1651,15 @@ badges = "".join(
 st.markdown(
     f"""
     <div class="hero">
-        <div class="eyebrow">Real-time K-POP Intelligence</div>
+        <div class="eyebrow">K-POP DATA & AI INTELLIGENCE</div>
         <h1 class="hero-title">K-POP Comeback Radar</h1>
         <div class="hero-subtitle">
             {escape_text(config["emoji"])}
             <strong>{escape_text(selected_artist)}</strong>의
-            Spotify·YouTube·글로벌 뉴스·국내 뉴스 신호를 한 화면에서 추적하고,
-            Solar AI 애널리스트에게 질문해보세요.
+            Apple 음악 카탈로그·YouTube·글로벌 뉴스·국내 뉴스 신호를 추적하고,
+            Solar AI 애널리스트에게 데이터 기반 질문을 해보세요.
         </div>
-        <div style="margin-top:15px;">{badges}</div>
+        <div style="margin-top:16px;">{badges}</div>
     </div>
     """,
     unsafe_allow_html=True,
@@ -1336,30 +1670,25 @@ if api_errors:
         for error in api_errors:
             st.warning(error)
 
-if demo_mode or not all(
-    [
-        spotify_connected,
-        youtube_connected,
-        news_connected,
-        naver_connected,
-    ]
-):
-    st.info(
-        "현재 일부 영역에는 데모 데이터가 포함될 수 있습니다. "
-        "Streamlit Secrets에 해당 API 키를 등록하면 실데이터로 전환됩니다."
-    )
+if demo_mode:
+    st.info("현재 전체 영역이 데모 모드로 실행 중입니다.")
+elif demo_sources:
+    st.info("현재 데모 데이터가 사용되는 영역: " + ", ".join(demo_sources))
+else:
+    st.success("모든 데이터 영역이 실시간 API로 연결되었습니다.")
 
-artist_data = spotify_data.get("artist", {})
+artist_data = apple_data.get("artist", {})
+album_data = apple_data.get("latest_album", {})
 top_video = max(youtube_data, key=lambda x: x.get("views", 0), default={})
 
 metric_columns = st.columns(5)
 metric_columns[0].metric(
-    "Spotify Popularity",
-    f"{artist_data.get('popularity', 0)}/100",
+    "Apple Catalog Albums",
+    f"{artist_data.get('catalog_albums', 0)}개",
 )
 metric_columns[1].metric(
-    "Spotify Followers",
-    format_number(artist_data.get("followers", 0)),
+    "Apple Catalog Tracks",
+    f"{artist_data.get('catalog_tracks', 0)}개",
 )
 metric_columns[2].metric(
     "Top YouTube Views",
@@ -1373,69 +1702,46 @@ metric_columns[4].metric("Korean News", f"{len(naver_news)}건")
 # 16. MAIN DASHBOARD
 # =========================================================
 
-left, center, right = st.columns([1.35, 1.65, 1.0], gap="large")
+left, center, right = st.columns([1.25, 1.6, 1.0], gap="large")
 
 with left:
-    st.markdown('<div class="section-title">💿 Latest Release</div>', unsafe_allow_html=True)
-    render_album_card(selected_artist, spotify_data)
+    st.markdown(
+        '<div class="section-title">🍎 Latest Apple Release</div>',
+        unsafe_allow_html=True,
+    )
+    render_album_card(selected_artist, apple_data)
 
-    st.markdown('<div class="section-title">🎧 Spotify Top Tracks</div>', unsafe_allow_html=True)
-
-    tracks_df = pd.DataFrame(spotify_data.get("top_tracks", []))
-
-    if tracks_df.empty:
-        st.info("Spotify 인기곡 정보가 없습니다.")
-    else:
-        chart_df = tracks_df.head(8).sort_values("popularity", ascending=True)
-
-        fig = px.bar(
-            chart_df,
-            x="popularity",
-            y="name",
-            orientation="h",
-            labels={"popularity": "Spotify Popularity", "name": ""},
-            text="popularity",
-        )
-        fig.update_layout(
-            height=390,
-            margin=dict(l=0, r=15, t=15, b=0),
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            font=dict(color="#d9dcec"),
-            xaxis=dict(
-                range=[0, 100],
-                gridcolor="rgba(255,255,255,.07)",
-            ),
-            yaxis=dict(tickfont=dict(size=11)),
-        )
-        fig.update_traces(
-            textposition="outside",
-            hovertemplate="<b>%{y}</b><br>Popularity: %{x}<extra></extra>",
-        )
-        st.plotly_chart(
-            fig,
-            use_container_width=True,
-            config={"displayModeBar": False},
-        )
+    st.markdown(
+        '<div class="section-title">🎧 Apple Search Tracks</div>',
+        unsafe_allow_html=True,
+    )
+    st.caption("Apple 검색 관련도 순서이며 공식 인기 순위는 아닙니다.")
+    render_track_list(apple_data.get("tracks", []))
 
 with center:
-    st.markdown('<div class="section-title">🎬 YouTube Signal</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="section-title">🎬 YouTube Signal</div>',
+        unsafe_allow_html=True,
+    )
     render_youtube_videos(youtube_data)
 
 with right:
-    st.markdown('<div class="section-title">📈 Comeback Score</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="section-title">📈 Comeback Score</div>',
+        unsafe_allow_html=True,
+    )
 
     st.markdown(
         f"""
         <div class="score-card">
             <div class="muted">현재 레이더 점수</div>
             <div class="score-number">{score:.0f}</div>
-            <div style="font-size:1.05rem;font-weight:800;margin-top:9px;">
+            <div style="font-size:1.05rem;font-weight:900;margin-top:9px;color:#3a315f;">
                 {escape_text(score_label(score))}
             </div>
             <div class="muted" style="margin-top:10px;">
-                Spotify·발매 시점·YouTube·국내외 뉴스 신호를
-                가중 합산한 연습용 지표입니다.
+                발매 최신성·YouTube·국내외 뉴스·Apple 카탈로그를
+                합산한 학습용 자체 지표입니다.
             </div>
         </div>
         """,
@@ -1453,26 +1759,26 @@ with right:
         line_close=True,
         range_r=[0, 100],
     )
-    radar_fig.update_traces(fill="toself")
+    radar_fig.update_traces(fill="toself", line=dict(color="#6957d9"))
     radar_fig.update_layout(
-        height=350,
-        margin=dict(l=20, r=20, t=35, b=25),
+        height=385,
+        margin=dict(l=18, r=18, t=40, b=30),
         paper_bgcolor="rgba(0,0,0,0)",
         polar=dict(
-            bgcolor="rgba(0,0,0,0)",
+            bgcolor="rgba(255,255,255,.55)",
             radialaxis=dict(
                 visible=True,
                 range=[0, 100],
-                gridcolor="rgba(255,255,255,.10)",
-                tickfont=dict(color="#9ba3be"),
+                gridcolor="rgba(105,87,217,.14)",
+                tickfont=dict(color="#77738b"),
             ),
             angularaxis=dict(
-                gridcolor="rgba(255,255,255,.10)",
-                tickfont=dict(color="#d9dcec", size=11),
+                gridcolor="rgba(105,87,217,.14)",
+                tickfont=dict(color="#373052", size=11),
             ),
         ),
         showlegend=False,
-        font=dict(color="#d9dcec"),
+        font=dict(color="#373052"),
     )
     st.plotly_chart(
         radar_fig,
@@ -1482,16 +1788,48 @@ with right:
 
 
 # =========================================================
-# 17. GLOBAL / KOREAN NEWS
+# 17. RELEASE HISTORY
 # =========================================================
 
 st.markdown("---")
-st.markdown('<div class="section-title">📰 Comeback News Monitor</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="section-title">💿 Recent Apple Catalog Releases</div>',
+    unsafe_allow_html=True,
+)
+
+albums_df = pd.DataFrame(apple_data.get("albums", []))
+
+if albums_df.empty:
+    st.info("표시할 앨범 이력이 없습니다.")
+else:
+    albums_df["발매일"] = albums_df["release_date"].map(format_date)
+    albums_df = albums_df.rename(
+        columns={
+            "name": "앨범",
+            "track_count": "트랙 수",
+        }
+    )
+    st.dataframe(
+        albums_df[["앨범", "발매일", "트랙 수"]],
+        use_container_width=True,
+        hide_index=True,
+    )
+
+
+# =========================================================
+# 18. NEWS
+# =========================================================
+
+st.markdown("---")
+st.markdown(
+    '<div class="section-title">📰 Comeback News Monitor</div>',
+    unsafe_allow_html=True,
+)
 
 global_tab, korean_tab = st.tabs(["🌎 Global News", "🇰🇷 Korean News"])
 
 with global_tab:
-    st.caption("NewsAPI를 통해 수집한 영문권 기사입니다.")
+    st.caption("Mediastack을 통해 수집한 영문권 기사입니다.")
     render_news_cards(global_news)
 
 with korean_tab:
@@ -1500,17 +1838,18 @@ with korean_tab:
 
 
 # =========================================================
-# 18. INTERPRETATION
+# 19. INTERPRETATION
 # =========================================================
 
 st.markdown("---")
-st.markdown('<div class="section-title">🔍 Radar Interpretation</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="section-title">🔍 Radar Interpretation</div>',
+    unsafe_allow_html=True,
+)
 
 strongest = max(components, key=components.get)
 weakest = min(components, key=components.get)
-release_age = days_since(
-    spotify_data.get("latest_album", {}).get("release_date")
-)
+release_age = days_since(album_data.get("release_date"))
 
 if release_age is None:
     release_description = "발매일을 확인할 수 없습니다."
@@ -1526,9 +1865,9 @@ with interpretation_columns[0]:
         f"""
         <div class="glass-card">
             <div class="muted">STRONGEST SIGNAL</div>
-            <h3>{escape_text(strongest)}</h3>
+            <h3 style="color:#443b70;">{escape_text(strongest)}</h3>
             <div class="muted">
-                {components[strongest]:.1f}점으로 현재 네 가지 지표 중 가장 높습니다.
+                {components[strongest]:.1f}점으로 현재 분석 지표 중 가장 높습니다.
             </div>
         </div>
         """,
@@ -1540,9 +1879,9 @@ with interpretation_columns[1]:
         f"""
         <div class="glass-card">
             <div class="muted">NEEDS MONITORING</div>
-            <h3>{escape_text(weakest)}</h3>
+            <h3 style="color:#443b70;">{escape_text(weakest)}</h3>
             <div class="muted">
-                {components[weakest]:.1f}점입니다. 추가 데이터에 따라 달라질 수 있습니다.
+                {components[weakest]:.1f}점입니다. 데이터 누적에 따라 달라질 수 있습니다.
             </div>
         </div>
         """,
@@ -1554,7 +1893,7 @@ with interpretation_columns[2]:
         f"""
         <div class="glass-card">
             <div class="muted">RELEASE TIMING</div>
-            <h3>Latest Signal</h3>
+            <h3 style="color:#443b70;">Latest Signal</h3>
             <div class="muted">{escape_text(release_description)}</div>
         </div>
         """,
@@ -1563,11 +1902,14 @@ with interpretation_columns[2]:
 
 
 # =========================================================
-# 19. SOLAR AI CHAT
+# 20. SOLAR CHAT
 # =========================================================
 
 st.markdown("---")
-st.markdown('<div class="section-title">🤖 Ask the Solar K-POP Analyst</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="section-title">🤖 Ask the Solar K-POP Analyst</div>',
+    unsafe_allow_html=True,
+)
 
 st.caption(
     "예: 국내와 해외 반응의 차이를 분석해줘 · "
@@ -1612,7 +1954,7 @@ if question:
             if solar_connected and not demo_mode:
                 context = build_ai_context(
                     selected_artist,
-                    spotify_data,
+                    apple_data,
                     youtube_data,
                     global_news,
                     naver_news,
@@ -1637,7 +1979,7 @@ if question:
                             question,
                             score,
                             components,
-                            spotify_data,
+                            apple_data,
                             youtube_data,
                             global_news,
                             naver_news,
@@ -1649,7 +1991,7 @@ if question:
                     question,
                     score,
                     components,
-                    spotify_data,
+                    apple_data,
                     youtube_data,
                     global_news,
                     naver_news,
@@ -1663,12 +2005,14 @@ if question:
 
 
 # =========================================================
-# 20. FOOTER
+# 21. FOOTER
 # =========================================================
 
 st.markdown("---")
 st.caption(
     "K-POP Comeback Radar MVP · "
-    "Spotify Web API · YouTube Data API · NewsAPI · Naver Search API · Upstage Solar · "
-    "Comeback Score는 본 프로젝트의 비공식 학습용 지표입니다."
+    "Apple iTunes Search API · YouTube Data API · Mediastack · "
+    "Naver Search API · Upstage Solar · "
+    "Apple 검색 결과는 공식 인기 순위가 아니며 Comeback Score는 비공식 학습용 지표입니다. · "
+"APPLE-ONLY BUILD 2026-07-23"
 )
